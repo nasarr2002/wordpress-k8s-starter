@@ -1,0 +1,31 @@
+image:
+  registry: docker.io
+  repository: bitnami/wordpress
+  tag: latest
+service:
+  type: NodePort
+  nodePorts:
+    http: 30080
+    https: ""
+ingress:
+  enabled: false
+
+mariadb:
+  enabled: true
+  auth:
+    rootPassword: "rootpass"
+    database: "wordpress"
+    username: "wpuser"
+    password: "wppass"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+persistence:
+  enabled: true
+  size: 5Gi

@@ -1,0 +1,38 @@
+pipeline {
+  agent any
+  environment {
+    DOCKERHUB_USER = credentials('dockerhub-username') // Create this credential in Jenkins
+    DOCKERHUB_PASS = credentials('dockerhub-password') // Create this credential in Jenkins
+    IMAGE = "${DOCKERHUB_USER}/wp-custom:dev"
+    NAMESPACE = "wordpress"
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+    stage('Docker Login') {
+      steps {
+        sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
+      }
+    }
+    stage('Build (optional)') {
+      when { expression { fileExists('Dockerfile') } }
+      steps {
+        sh 'docker build -t $IMAGE .'
+        sh 'docker push $IMAGE'
+      }
+    }
+    stage('Deploy Helm (dev)') {
+      steps {
+        sh '''
+        helm repo add bitnami https://charts.bitnami.com/bitnami
+        helm repo update
+        kubectl create namespace $NAMESPACE || true
+        helm upgrade --install wordpress bitnami/wordpress -n $NAMESPACE -f infra/helm/wordpress/values-dev.yaml
+        '''
+      }
+    }
+  }
+}

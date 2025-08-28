@@ -1,0 +1,14 @@
+service:
+  type: ClusterIP
+replicaCount: 3
+mariadb:
+  primary:
+    persistence:
+      size: 20Gi
+resources:
+  requests:
+    cpu: 300m
+    memory: 1Gi
+  limits:
+    cpu: 2
+    memory: 2Gi

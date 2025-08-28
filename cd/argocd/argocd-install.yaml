@@ -1,0 +1,16 @@
+# ArgoCD core install (stable)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argocd
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argocd-application-controller
+  namespace: argocd
+---
+# NOTE: For a quick start we rely on the official install manifest.
+# Apply the official manifest after creating the namespace:
+# kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+# Using this file only to keep the steps in one folder. See README for the exact command.
