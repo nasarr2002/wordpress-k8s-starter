@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: site-new
+  namespace: wordpress
+  labels: { app: site, version: new }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: site, version: new }
+  template:
+    metadata:
+      labels: { app: site, version: new }
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: content
+              mountPath: /usr/share/nginx/html
+              readOnly: true
+      volumes:
+        - name: content
+          configMap:
+            name: site-new-content

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: site-new-content
+  namespace: wordpress
+data:
+  index.html: |
+    <html>
+      <head><title>Modern App</title></head>
+      <body style="font-family: sans-serif;">
+        <h1>🚀 Modern application</h1>
+        <p>Version: <b>v2 (new)</b></p>
+        <p>Nouvelle version après migration réussie.</p>
+      </body>
+    </html>

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: site-legacy-content
+  namespace: wordpress
+data:
+  index.html: |
+    <html>
+      <head><title>Legacy App</title></head>
+      <body style="font-family: sans-serif;">
+        <h1>🏷️ Legacy application</h1>
+        <p>Version: <b>v1 (legacy)</b></p>
+        <p>Ancienne version encore en production.</p>
+      </body>
+    </html>
