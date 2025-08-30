@@ -5,20 +5,18 @@ metadata:
   labels:
     {{- include "wordpress.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "wordpress.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      labels:
+        {{- include "wordpress.selectorLabels" . | nindent 8 }}
       {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      labels:
-        {{- include "wordpress.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -29,20 +27,23 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
       containers:
         - name: {{ .Chart.Name }}
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}{{ if .Values.image.tag }}:{{ .Values.image.tag }}{{ end }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          # ----- UN SEUL bloc ports -----
+
+          # UN SEUL bloc ports
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-          # ----- Probes optionnelles, un seul handler (httpGet) issu de values.yaml -----
+
+          # Probes : on rend exactement ce qu'il y a dans values.yaml (donc un seul handler httpGet)
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
@@ -51,6 +52,7 @@ spec:
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
@@ -59,6 +61,7 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
@@ -75,4 +78,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-
