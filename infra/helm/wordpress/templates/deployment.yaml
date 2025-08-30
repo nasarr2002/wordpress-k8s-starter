@@ -19,9 +19,6 @@ spec:
       {{- end }}
       labels:
         {{- include "wordpress.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -40,10 +37,12 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # ----- UN SEUL bloc ports -----
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          # ----- Probes optionnelles, un seul handler (httpGet) issu de values.yaml -----
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
@@ -76,3 +75,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
